@@ -14,8 +14,14 @@
       #messages > li { padding: 0.5rem 1rem; }
       #messages > li:nth-child(odd) { background: #efefef; }
     </style>
+
   </head>
   <body>
+    <form id="username-form">
+      <input id="username-input" placeholder="Username"></input>
+      <button id="create-user-btn">Create Username</button>
+    </form>
+
     <ul id="messages"></ul>
     <form id="form" action="">
       <input id="input" autocomplete="off" /><button>Send</button>
@@ -33,10 +39,17 @@
         e.preventDefault();
         if (input.value) {
           socket.emit('chat message', input.value);
-
           input.value = '';
         }
       });
+
+      var globalUsername 
+
+      socket.on("new user", (username) => {
+      console.log(`${username} has joined the chat`);
+      globalUsername = username
+    // $(".users-online").append(`<div class="user-online">${username}</div>`);
+  });
 
       socket.on('chat message', function(msg) {
         var item = document.createElement('li');
@@ -51,6 +64,24 @@
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       });
+
+
+      var usernameForm = document.getElementById("username-form")
+      var usernameInput = document.getElementById("username-input")
+      usernameForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (usernameInput.value) {
+          socket.emit("new user", usernameInput.value);
+          usernameForm.removeChild(document.getElementById("username-input"));
+        }
+      })
+
+
+  socket.on("new user", (username) => {
+    console.log(`${username} has joined the chat`);
+    // $(".users-online").append(`<div class="user-online">${username}</div>`);
+  });
+
     </script>
 <!-- 
 <script src="/socket.io/socket.io.js"></script>
