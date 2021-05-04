@@ -9,21 +9,26 @@ app.get("/", (req, res) => {
 });
 
 var globalUsername
+var onlineUsers = {}
 io.on("connection", (socket) => {
   // console.log("a user connected");
+
   socket.on("send-nickname", function (nickname) {
     // console.log(nickname, "nickname")
+    onlineUsers[nickname] = socket.id
     // socket.nickname = nickname;
     socket["username"] = nickname;
     // globalUsername = nickname
-    console.log(globalUsername)
     // users.push(socket.nickname);
     // console.log(users);
     io.emit("send-nickname", nickname)
     io.emit("user_login", `${nickname} has joined. Hi!`);
+    io.emit("online-users", onlineUsers)
   });
 
+  
   io.emit("user_login", "Hi, WELCOME TO OUR CHAT");
+
   socket.on("chat message", (msg) => {
     // console.log("message: " + `${globalUsername}: ${msg}`);
     let username = socket.username
@@ -34,7 +39,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     // console.log("user disconnected");
     let username = socket.username
-    delete socket.username
+    delete onlineUsers[socket.username]
     io.emit("user_login", `${username} has left. Bye!`);
   });
 
