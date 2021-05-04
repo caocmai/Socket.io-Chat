@@ -12,7 +12,7 @@
 
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages > li { padding: 0.5rem 1rem; }
-      #messages > li:nth-child(odd) { background: #efefef; }
+      /* #messages > li:nth-child(odd) { background: #efefef; } */
     </style>
 
   </head>
@@ -43,13 +43,12 @@
         }
       });
 
-      var globalUsername 
-
-      socket.on("new user", (username) => {
-      console.log(`${username} has joined the chat`);
-      globalUsername = username
-    // $(".users-online").append(`<div class="user-online">${username}</div>`);
-  });
+      // var globalUsername 
+    //   socket.on("new user", (username) => {
+    //     console.log(`${username} has joined the chat`);
+    //     globalUsername = username
+    // // $(".users-online").append(`<div class="user-online">${username}</div>`);
+    //  });
 
       socket.on('chat message', function(msg) {
         var item = document.createElement('li');
@@ -71,16 +70,16 @@
       usernameForm.addEventListener('submit', function(e) {
         e.preventDefault();
         if (usernameInput.value) {
-          socket.emit("new user", usernameInput.value);
-          usernameForm.removeChild(document.getElementById("username-input"));
+          socket.emit("send-nickname", usernameInput.value);
+          // usernameForm.removeChild(document.getElementById("username-input"));
         }
       })
 
 
-  socket.on("new user", (username) => {
-    console.log(`${username} has joined the chat`);
-    // $(".users-online").append(`<div class="user-online">${username}</div>`);
-  });
+    socket.on("nickname", (username) => {
+      console.log(`${username} nickname has joined the chat`);
+      // $(".users-online").append(`<div class="user-online">${username}</div>`);
+    });
 
     </script>
 <!-- 

@@ -10,34 +10,35 @@ app.get("/", (req, res) => {
 
 var globalUsername
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  // console.log("a user connected");
   socket.on("send-nickname", function (nickname) {
-    socket.nickname = nickname;
-    users.push(socket.nickname);
-    console.log(users);
+    // console.log(nickname, "nickname")
+    // socket.nickname = nickname;
+    socket["username"] = nickname;
+    // globalUsername = nickname
+    console.log(globalUsername)
+    // users.push(socket.nickname);
+    // console.log(users);
+    io.emit("send-nickname", nickname)
+    io.emit("user_login", `${nickname} has joined. Hi!`);
   });
 
-  io.emit("user_login", "A new user has joined. Hi!");
+  io.emit("user_login", "Hi, WELCOME TO OUR CHAT");
   socket.on("chat message", (msg) => {
-    console.log("message: " + `${globalUsername}: ${msg}`);
-    io.emit("chat message", `${globalUsername}: ${msg}`);
+    // console.log("message: " + `${globalUsername}: ${msg}`);
+    let username = socket.username
+    console.log("chat user", username)
+    io.emit("chat message", `${username}: ${msg}`);
   });
 
   socket.on("disconnect", () => {
-    console.log("user disconnected");
-    io.emit("user_login", "A user has left. Bye!");
+    // console.log("user disconnected");
+    let username = socket.username
+    delete socket.username
+    io.emit("user_login", `${username} has left. Bye!`);
   });
 
-  socket.on("new user", (username) => {
-    globalUsername = username
-    console.log(`✋ ${username} has joined the chat! ✋`);
-    //Save the username to socket as well. This is important for later.
-    socket["username"] = username;
-    //Send the username to all clients currently connected
-    io.emit("new user", username);
-  });
 });
-
 
 
 http.listen(port, () => {
